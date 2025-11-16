@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가사문학초 교육과정 월드컵 - 테스트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.5em;
+            margin-bottom: 40px;
+        }
+        
+        .round-info {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            border-radius: 15px;
+        }
+        
+        .match-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+        
+        .program {
+            flex: 1;
+            max-width: 500px;
+            background: white;
+            border: 4px solid #667eea;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .program img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 3px solid #e9ecef;
+        }
+        
+        .program-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .vote-count {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .vs {
+            font-size: 4em;
+            font-weight: bold;
+            color: #764ba2;
+        }
+        
+        button {
+            padding: 20px 40px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .info-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .info-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 가사문학초 교육과정 월드컵</h1>
+        <p class="subtitle">테스트 버전 (Firebase 없이 작동)</p>
+        
+        <div class="info-box">
+            <h3>📌 이 페이지는 테스트용입니다</h3>
+            <p>✓ 이미지가 잘 보이는지 확인용</p>
+            <p>✓ 버튼 클릭으로 투표 시뮬레이션</p>
+            <p>✓ Firebase 설정 없이도 작동</p>
+        </div>
+        
+        <div class="round-info" id="roundInfo">16강 1경기</div>
+        
+        <div id="matchArea"></div>
+        
+        <div class="controls">
+            <button onclick="voteProgram1()">← 왼쪽 투표</button>
+            <button onclick="nextMatch()">다음 경기 ▶</button>
+            <button onclick="voteProgram2()">오른쪽 투표 →</button>
+        </div>
+    </div>
+
+    <script>
+        const programs = [
+            { id: 1, name: "5·18 민주화운동 인권탐방", image: "5_18_민주화운동_인권탐방.jpg" },
+            { id: 2, name: "과학진로탐방 - 국립과학관", image: "과학진로탐방-국립과학관.jpg" },
+            { id: 3, name: "독서토론학습", image: "독서토론학습.jpg" },
+            { id: 4, name: "법과 인권 - 솔로몬로파크", image: "법과인권-솔로몬로파크.jpg" },
+            { id: 5, name: "봄소리 체험학습 - 소쇄원", image: "봄소리_체험학습-소쇄원.JPG" },
+            { id: 6, name: "생존수영", image: "생존수영.jpg" },
+            { id: 7, name: "생태 놀이", image: "생태_놀이.jpg" },
+            { id: 8, name: "생태 텃밭가꾸기", image: "생태_텃밭가꾸기.jpg" },
+            { id: 9, name: "선배가 읽어주는 동화책", image: "선배가_읽어주는_동화책.jpg" },
+            { id: 10, name: "승마 익히기", image: "승마_익히기.jpg" },
+            { id: 11, name: "야영수련활동", image: "야영수련활동.jpg" },
+            { id: 12, name: "역사문화 체험학습", image: "역사문화_체험학습.jpg" },
+            { id: 13, name: "역사탐방 - 상해", image: "역사탐방-상해.jpg" },
+            { id: 14, name: "자전거 라이딩", image: "자전거_라이딩.jpg" },
+            { id: 15, name: "작가와의 만남", image: "작가와의_만남.jpg" },
+            { id: 16, name: "한마음 체육대회", image: "한마음_체육대회.jpg" }
+        ];
+
+        let currentRound = 16;
+        let currentMatch = 0;
+        let roundMatches = [];
+        
+        // 초기화
+        function init() {
+            roundMatches = [];
+            for (let i = 0; i < programs.length; i += 2) {
+                roundMatches.push({
+                    program1: programs[i],
+                    program2: programs[i + 1],
+                    votes1: 0,
+                    votes2: 0
+                });
+            }
+            displayCurrentMatch();
+        }
+        
+        // 현재 경기 표시
+        function displayCurrentMatch() {
+            const match = roundMatches[currentMatch];
+            if (!match) {
+                alert('라운드 완료!');
+                return;
+            }
+            
+            const roundNames = { 16: '16강', 8: '8강', 4: '준결승', 2: '결승' };
+            document.getElementById('roundInfo').textContent = 
+                `${roundNames[currentRound]} ${currentMatch + 1}경기`;
+            
+            document.getElementById('matchArea').innerHTML = `
+                <div class="match-container">
+                    <div class="program">
+                        <img src="${match.program1.image}" 
+                             alt="${match.program1.name}"
+                             onerror="this.style.border='3px solid red'; this.alt='이미지 로딩 실패: ${match.program1.image}'">
+                        <div class="program-name">${match.program1.name}</div>
+                        <div class="vote-count" id="votes1">${match.votes1}</div>
+                        <div style="color: #999;">투표</div>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="program">
+                        <img src="${match.program2.image}" 
+                             alt="${match.program2.name}"
+                             onerror="this.style.border='3px solid red'; this.alt='이미지 로딩 실패: ${match.program2.image}'">
+                        <div class="program-name">${match.program2.name}</div>
+                        <div class="vote-count" id="votes2">${match.votes2}</div>
+                        <div style="color: #999;">투표</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 투표 함수
+        function voteProgram1() {
+            roundMatches[currentMatch].votes1++;
+            document.getElementById('votes1').textContent = roundMatches[currentMatch].votes1;
+        }
+        
+        function voteProgram2() {
+            roundMatches[currentMatch].votes2++;
+            document.getElementById('votes2').textContent = roundMatches[currentMatch].votes2;
+        }
+        
+        // 다음 경기
+        function nextMatch() {
+            const match = roundMatches[currentMatch];
+            const winner = match.votes1 > match.votes2 ? match.program1 : match.program2;
+            match.winner = winner;
+            
+            currentMatch++;
+            
+            if (currentMatch >= roundMatches.length) {
+                // 라운드 종료
+                if (currentRound === 2) {
+                    alert('우승: ' + winner.name);
+                    return;
+                }
+                nextRound();
+            } else {
+                displayCurrentMatch();
+            }
+        }
+        
+        // 다음 라운드
+        function nextRound() {
+            const winners = roundMatches.filter(m => m.winner).map(m => m.winner);
+            currentRound = currentRound / 2;
+            currentMatch = 0;
+            roundMatches = [];
+            
+            for (let i = 0; i < winners.length; i += 2) {
+                roundMatches.push({
+                    program1: winners[i],
+                    program2: winners[i + 1],
+                    votes1: 0,
+                    votes2: 0
+                });
+            }
+            
+            displayCurrentMatch();
+        }
+        
+        // 시작
+        init();
+    </script>
+</body>
+</html>

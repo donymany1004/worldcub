@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가사문학초 교육과정 월드컵 - 투표</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .round-info {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            border-radius: 15px;
+        }
+        
+        .vote-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .program-card {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .program-card.pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        .program-card.voted {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, #fff9e6 0%, #fffdf0 100%);
+        }
+        
+        .program-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .program-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .vote-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .vote-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .vote-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .voted-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ffd700;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .waiting-message {
+            text-align: center;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .waiting-message h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .waiting-message p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .vs-divider {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #764ba2;
+            margin: 20px 0;
+        }
+        
+        .thank-you {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+            margin: 20px 0;
+        }
+        
+        .thank-you h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        .thank-you p {
+            font-size: 1.3em;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .round-transition {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+            margin: 20px 0;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .round-transition h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .qualifiers-list {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .qualifier-item {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            font-weight: bold;
+            animation: fadeInUp 0.5s ease-out backwards;
+        }
+        
+        .qualifier-item:nth-child(1) { animation-delay: 0.1s; }
+        .qualifier-item:nth-child(2) { animation-delay: 0.2s; }
+        .qualifier-item:nth-child(3) { animation-delay: 0.3s; }
+        .qualifier-item:nth-child(4) { animation-delay: 0.4s; }
+        .qualifier-item:nth-child(5) { animation-delay: 0.5s; }
+        .qualifier-item:nth-child(6) { animation-delay: 0.6s; }
+        .qualifier-item:nth-child(7) { animation-delay: 0.7s; }
+        .qualifier-item:nth-child(8) { animation-delay: 0.8s; }
+        
+        .countdown {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 30px 0;
+            animation: countdownPulse 1s infinite;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes countdownPulse {
+            0%, 100% { 
+                transform: scale(1);
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            }
+            50% { 
+                transform: scale(1.2);
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 가사문학초 교육과정 월드컵</h1>
+        <p class="subtitle">우리 학교 최고의 교육과정을 선택해주세요!</p>
+        
+        <div class="round-info" id="roundInfo">투표 준비 중...</div>
+        
+        <div id="voteArea"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue, get, update } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase 설정 (admin.html과 동일하게 입력)
+        const firebaseConfig = {
+  apiKey: "AIzaSyBIdf7hGDp_WO_8dX1NvH3D1kfg_sZbFUk",
+  authDomain: "gasa-worldcub.firebaseapp.com",
+  databaseURL: "https://gasa-worldcub-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gasa-worldcub",
+  storageBucket: "gasa-worldcub.firebasestorage.app",
+  messagingSenderId: "729250674988",
+  appId: "1:729250674988:web:faa2c5f8342f6c83e31489"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 🔊 효과음 생성 시스템
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'vote':
+                    // 투표 완료 - 기분 좋은 띵동 소리
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                    break;
+                    
+                case 'roundComplete':
+                    // 라운드 종료 - 축하 팡파레
+                    [523, 659, 784, 880, 1047, 1175].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                        gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+                        osc.start(audioContext.currentTime + i * 0.12);
+                        osc.stop(audioContext.currentTime + i * 0.12 + 0.6);
+                    });
+                    break;
+                    
+                case 'countdown':
+                    // 카운트다운 - 틱톡
+                    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+                    
+                case 'roundStart':
+                    // 라운드 시작 - 시작 벨
+                    [800, 1000, 1200].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                        gain.gain.setValueAtTime(0.25, audioContext.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        osc.start(audioContext.currentTime + i * 0.05);
+                        osc.stop(audioContext.currentTime + i * 0.05 + 0.3);
+                    });
+                    break;
+            }
+        }
+
+        let hasVoted = false;
+        let currentMatchData = null;
+        let isRoundTransition = false;
+
+        // 라운드 이름 매핑
+        const roundNames = {
+            16: '16강',
+            8: '8강',
+            4: '준결승',
+            2: '결승'
+        };
+        
+        const nextRoundNames = {
+            16: '8강',
+            8: '준결승',
+            4: '결승'
+        };
+
+        // 투표 가능 여부 감지
+        onValue(ref(db, 'tournament/votingActive'), (snapshot) => {
+            const active = snapshot.val();
+            if (active && !isRoundTransition) {
+                hasVoted = false;
+                loadCurrentMatch();
+            } else if (!active && !isRoundTransition) {
+                showWaitingMessage();
+            }
+        });
+        
+        // 라운드 전환 감지
+        let lastRound = 16;
+        onValue(ref(db, 'tournament/currentRound'), (snapshot) => {
+            const round = snapshot.val();
+            if (round && round !== lastRound && lastRound > round) {
+                // 라운드가 변경됨! 전환 화면 표시
+                showRoundTransition(lastRound, round);
+            }
+            lastRound = round;
+        });
+        
+        // 라운드 전환 화면 표시
+        async function showRoundTransition(oldRound, newRound) {
+            isRoundTransition = true;
+            playSound('roundComplete');
+            
+            // Firebase에서 진출자 명단 가져오기
+            const roundsSnapshot = await get(ref(db, `tournament/rounds/${oldRound}`));
+            const matches = roundsSnapshot.val();
+            const winners = matches ? matches.filter(m => m.winner).map(m => m.winner.name) : [];
+            
+            const qualifiersHTML = winners.map((name, i) => 
+                `<div class="qualifier-item">✨ ${name}</div>`
+            ).join('');
+            
+            document.getElementById('voteArea').innerHTML = `
+                <div class="round-transition">
+                    <h2>🎉 ${roundNames[oldRound]} 종료! 🎉</h2>
+                    <p style="font-size: 1.3em; margin: 15px 0;">${nextRoundNames[oldRound]} 진출 프로그램</p>
+                    <div class="qualifiers-list">
+                        ${qualifiersHTML}
+                    </div>
+                    <p style="font-size: 1.2em; margin: 20px 0;">🏆 ${nextRoundNames[oldRound]} 진출을 축하합니다! 🏆</p>
+                    <div class="countdown" id="countdown">3</div>
+                    <p style="font-size: 1em; opacity: 0.8;">잠시 후 ${nextRoundNames[oldRound]}이 시작됩니다...</p>
+                </div>
+            `;
+            
+            // 카운트다운
+            await new Promise(resolve => {
+                let count = 3;
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        playSound('countdown');
+                        const countdownElem = document.getElementById('countdown');
+                        if (countdownElem) countdownElem.textContent = count;
+                    } else {
+                        clearInterval(countdownInterval);
+                        resolve();
+                    }
+                }, 1000);
+            });
+            
+            playSound('roundStart');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            isRoundTransition = false;
+            showWaitingMessage();
+        }
+
+        // 현재 경기 데이터 감지
+        onValue(ref(db, 'tournament/currentMatchData'), (snapshot) => {
+            currentMatchData = snapshot.val();
+            if (currentMatchData && !hasVoted) {
+                displayVoteOptions();
+            }
+        });
+
+        // 라운드 정보 감지
+        onValue(ref(db, 'tournament/currentRound'), (snapshot) => {
+            const round = snapshot.val();
+            if (round) {
+                updateRoundInfo(round);
+            }
+        });
+
+        onValue(ref(db, 'tournament/currentMatch'), (snapshot) => {
+            const match = snapshot.val();
+            if (match !== null) {
+                updateMatchNumber(match);
+            }
+        });
+
+        let currentRound = 16;
+        let currentMatchNum = 0;
+
+        function updateRoundInfo(round) {
+            currentRound = round;
+            document.getElementById('roundInfo').textContent = 
+                `${roundNames[round]} ${currentMatchNum + 1}경기`;
+        }
+
+        function updateMatchNumber(match) {
+            currentMatchNum = match;
+            document.getElementById('roundInfo').textContent = 
+                `${roundNames[currentRound]} ${match + 1}경기`;
+        }
+
+        // 현재 경기 로드
+        async function loadCurrentMatch() {
+            const snapshot = await get(ref(db, 'tournament/currentMatchData'));
+            currentMatchData = snapshot.val();
+            if (currentMatchData) {
+                displayVoteOptions();
+            }
+        }
+
+        // 투표 옵션 표시
+        function displayVoteOptions() {
+            if (!currentMatchData || hasVoted) return;
+            
+            document.getElementById('voteArea').innerHTML = `
+                <div class="vote-container">
+                    <div class="program-card pulse" id="card1">
+                        <img src="${currentMatchData.program1.image}" 
+                             alt="${currentMatchData.program1.name}"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22250%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22250%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%23999%22%3E사진 로딩 중...%3C/text%3E%3C/svg%3E'">
+                        <div class="program-name">${currentMatchData.program1.name}</div>
+                        <button class="vote-btn" onclick="vote(1)">이 프로그램에 투표하기 ✓</button>
+                    </div>
+                    
+                    <div class="vs-divider">VS</div>
+                    
+                    <div class="program-card pulse" id="card2">
+                        <img src="${currentMatchData.program2.image}" 
+                             alt="${currentMatchData.program2.name}"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22250%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22250%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%23999%22%3E사진 로딩 중...%3C/text%3E%3C/svg%3E'">
+                        <div class="program-name">${currentMatchData.program2.name}</div>
+                        <button class="vote-btn" onclick="vote(2)">이 프로그램에 투표하기 ✓</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 투표 처리
+        window.vote = async function(choice) {
+            if (hasVoted) return;
+            
+            hasVoted = true;
+            playSound('vote'); // 🔊 투표 완료 소리!
+            
+            // 투표 수 업데이트
+            const voteField = choice === 1 ? 'votes1' : 'votes2';
+            const currentVotes = currentMatchData[voteField] || 0;
+            
+            await update(ref(db, 'tournament/currentMatchData'), {
+                [voteField]: currentVotes + 1
+            });
+            
+            // 투표 완료 표시
+            const cardId = choice === 1 ? 'card1' : 'card2';
+            const card = document.getElementById(cardId);
+            card.classList.add('voted');
+            card.classList.remove('pulse');
+            card.innerHTML += '<div class="voted-badge">투표 완료!</div>';
+            
+            // 버튼 비활성화
+            const buttons = document.querySelectorAll('.vote-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            // 감사 메시지
+            setTimeout(() => {
+                document.getElementById('voteArea').innerHTML = `
+                    <div class="thank-you">
+                        <h2>🎉 투표 완료!</h2>
+                        <p>소중한 의견 감사합니다</p>
+                        <p style="margin-top: 20px; font-size: 1em;">다음 경기를 기다려주세요...</p>
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        // 대기 메시지 표시
+        function showWaitingMessage() {
+            document.getElementById('voteArea').innerHTML = `
+                <div class="waiting-message">
+                    <h2>⏳ 잠시만 기다려주세요</h2>
+                    <p>다음 경기가 곧 시작됩니다</p>
+                    <p style="margin-top: 15px; color: #999;">투표가 시작되면 자동으로 화면이 전환됩니다</p>
+                </div>
+            `;
+        }
+
+        // 초기 로드
+        loadCurrentMatch();
+    </script>
+</body>
+</html>

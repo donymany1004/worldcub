@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .image-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+        }
+        .image-card h3 {
+            margin: 10px 0;
+            font-size: 1em;
+            color: #333;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .ok { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🖼️ 이미지 로딩 테스트</h1>
+    <p>아래 16개 이미지가 모두 보여야 합니다</p>
+    
+    <div class="image-grid" id="imageGrid"></div>
+
+    <script>
+        const programs = [
+            { id: 1, name: "5·18 민주화운동 인권탐방", image: "5_18_민주화운동_인권탐방.jpg" },
+            { id: 2, name: "과학진로탐방 - 국립과학관", image: "과학진로탐방-국립과학관.jpg" },
+            { id: 3, name: "독서토론학습", image: "독서토론학습.jpg" },
+            { id: 4, name: "법과 인권 - 솔로몬로파크", image: "법과인권-솔로몬로파크.jpg" },
+            { id: 5, name: "봄소리 체험학습 - 소쇄원", image: "봄소리_체험학습-소쇄원.JPG" },
+            { id: 6, name: "생존수영", image: "생존수영.jpg" },
+            { id: 7, name: "생태 놀이", image: "생태_놀이.jpg" },
+            { id: 8, name: "생태 텃밭가꾸기", image: "생태_텃밭가꾸기.jpg" },
+            { id: 9, name: "선배가 읽어주는 동화책", image: "선배가_읽어주는_동화책.jpg" },
+            { id: 10, name: "승마 익히기", image: "승마_익히기.jpg" },
+            { id: 11, name: "야영수련활동", image: "야영수련활동.jpg" },
+            { id: 12, name: "역사문화 체험학습", image: "역사문화_체험학습.jpg" },
+            { id: 13, name: "역사탐방 - 상해", image: "역사탐방-상해.jpg" },
+            { id: 14, name: "자전거 라이딩", image: "자전거_라이딩.jpg" },
+            { id: 15, name: "작가와의 만남", image: "작가와의_만남.jpg" },
+            { id: 16, name: "한마음 체육대회", image: "한마음_체육대회.jpg" }
+        ];
+
+        const grid = document.getElementById('imageGrid');
+        
+        programs.forEach(prog => {
+            const card = document.createElement('div');
+            card.className = 'image-card';
+            
+            const img = document.createElement('img');
+            img.src = prog.image;
+            img.alt = prog.name;
+            
+            const title = document.createElement('h3');
+            title.textContent = prog.name;
+            
+            const status = document.createElement('div');
+            status.className = 'status';
+            status.textContent = '로딩 중...';
+            
+            img.onload = function() {
+                status.className = 'status ok';
+                status.textContent = '✓ 로딩 성공!';
+            };
+            
+            img.onerror = function() {
+                status.className = 'status error';
+                status.textContent = '✗ 로딩 실패: ' + prog.image;
+            };
+            
+            card.appendChild(img);
+            card.appendChild(title);
+            card.appendChild(status);
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
