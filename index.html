@@ -532,6 +532,7 @@
             // 투표 활성화
             set(ref(db, 'tournament/votingActive'), true);
             set(ref(db, 'tournament/currentMatchData'), match);
+            set(ref(db, 'tournament/currentMatch'), currentMatch); // 경기 번호 저장
         }
 
         // 실시간 투표 감지
@@ -611,6 +612,29 @@
             const currentRoundName = { 16: '16강', 8: '8강', 4: '준결승' };
             const nextRoundName = { 8: '8강', 4: '준결승', 2: '결승' };
             
+            // 다음 라운드 설정 먼저 준비
+            const newRound = currentRound / 2;
+            const newMatches = [];
+            
+            for (let i = 0; i < winners.length; i += 2) {
+                newMatches.push({
+                    program1: winners[i],
+                    program2: winners[i + 1],
+                    votes1: 0,
+                    votes2: 0,
+                    winner: null
+                });
+            }
+            
+            // 🎊 Firebase에 라운드 전환 정보 저장 (vote.html이 즉시 감지하도록)
+            await set(ref(db, 'tournament/roundTransition'), {
+                active: true,
+                oldRound: currentRound,
+                newRound: newRound,
+                winners: winners.map(w => w.name),
+                startTime: Date.now()
+            });
+            
             // 🎊 라운드 종료 축하 화면 표시
             playSound('roundComplete');
             
@@ -652,20 +676,15 @@
             // 🔊 라운드 시작 효과음
             playSound('roundStart');
             
-            // 다음 라운드 설정
-            currentRound = currentRound / 2;
-            currentMatch = 0;
-            roundMatches = [];
+            // 라운드 전환 완료 표시
+            await set(ref(db, 'tournament/roundTransition'), {
+                active: false
+            });
             
-            for (let i = 0; i < winners.length; i += 2) {
-                roundMatches.push({
-                    program1: winners[i],
-                    program2: winners[i + 1],
-                    votes1: 0,
-                    votes2: 0,
-                    winner: null
-                });
-            }
+            // 라운드 데이터 업데이트
+            currentRound = newRound;
+            currentMatch = 0;
+            roundMatches = newMatches;
             
             tournamentData.rounds[currentRound.toString()] = roundMatches;
             tournamentData.currentRound = currentRound;

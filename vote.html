@@ -384,28 +384,22 @@
             }
         });
         
-        // 라운드 전환 감지
-        let lastRound = 16;
-        onValue(ref(db, 'tournament/currentRound'), (snapshot) => {
-            const round = snapshot.val();
-            if (round && round !== lastRound && lastRound > round) {
-                // 라운드가 변경됨! 전환 화면 표시
-                showRoundTransition(lastRound, round);
+        // 🎊 라운드 전환 감지 (admin과 동시에 시작)
+        onValue(ref(db, 'tournament/roundTransition'), (snapshot) => {
+            const transition = snapshot.val();
+            if (transition && transition.active && !isRoundTransition) {
+                // 관리자가 라운드 전환 시작! 즉시 동기화
+                showRoundTransition(transition.oldRound, transition.newRound, transition.winners);
             }
-            lastRound = round;
         });
         
         // 라운드 전환 화면 표시
-        async function showRoundTransition(oldRound, newRound) {
+        async function showRoundTransition(oldRound, newRound, winnerNames) {
             isRoundTransition = true;
             playSound('roundComplete');
             
-            // Firebase에서 진출자 명단 가져오기
-            const roundsSnapshot = await get(ref(db, `tournament/rounds/${oldRound}`));
-            const matches = roundsSnapshot.val();
-            const winners = matches ? matches.filter(m => m.winner).map(m => m.winner.name) : [];
-            
-            const qualifiersHTML = winners.map((name, i) => 
+            // 진출자 명단 (매개변수로 받은 데이터 사용)
+            const qualifiersHTML = winnerNames.map((name, i) => 
                 `<div class="qualifier-item">✨ ${name}</div>`
             ).join('');
             
