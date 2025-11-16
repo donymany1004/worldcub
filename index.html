@@ -343,6 +343,7 @@
   appId: "1:729250674988:web:faa2c5f8342f6c83e31489"
 };
 
+
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
@@ -625,18 +626,21 @@
                         ${qualifiersHTML}
                     </div>
                     <p class="next-round-info">🏆 ${nextRoundName[currentRound / 2]} 진출을 축하합니다! 🏆</p>
-                    <div class="countdown" id="countdown">3</div>
+                    <div class="countdown" id="countdown">15</div>
                     <p style="font-size: 1.3em; opacity: 0.8;">잠시 후 ${nextRoundName[currentRound / 2]}이 시작됩니다...</p>
                 </div>
             `;
             
-            // 카운트다운 3, 2, 1...
+            // 카운트다운 15초부터 1초까지
             await new Promise(resolve => {
-                let count = 3;
+                let count = 15;
                 const countdownInterval = setInterval(() => {
                     count--;
                     if (count > 0) {
-                        playSound('countdown');
+                        if (count <= 5) {
+                            // 마지막 5초만 소리
+                            playSound('countdown');
+                        }
                         document.getElementById('countdown').textContent = count;
                     } else {
                         clearInterval(countdownInterval);
@@ -669,8 +673,8 @@
             
             await set(ref(db, 'tournament'), tournamentData);
             
-            // 잠깐 대기 후 첫 경기 시작
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // 잠깐 대기 후 첫 경기 시작 (vote.html이 준비될 시간 제공)
+            await new Promise(resolve => setTimeout(resolve, 1000));
             displayCurrentMatch();
         }
 

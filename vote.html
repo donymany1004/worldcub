@@ -289,6 +289,7 @@
   appId: "1:729250674988:web:faa2c5f8342f6c83e31489"
 };
 
+
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
@@ -416,18 +417,21 @@
                         ${qualifiersHTML}
                     </div>
                     <p style="font-size: 1.2em; margin: 20px 0;">🏆 ${nextRoundNames[oldRound]} 진출을 축하합니다! 🏆</p>
-                    <div class="countdown" id="countdown">3</div>
+                    <div class="countdown" id="countdown">15</div>
                     <p style="font-size: 1em; opacity: 0.8;">잠시 후 ${nextRoundNames[oldRound]}이 시작됩니다...</p>
                 </div>
             `;
             
-            // 카운트다운
+            // 카운트다운 15초
             await new Promise(resolve => {
-                let count = 3;
+                let count = 15;
                 const countdownInterval = setInterval(() => {
                     count--;
                     if (count > 0) {
-                        playSound('countdown');
+                        if (count <= 5) {
+                            // 마지막 5초만 소리
+                            playSound('countdown');
+                        }
                         const countdownElem = document.getElementById('countdown');
                         if (countdownElem) countdownElem.textContent = count;
                     } else {
@@ -438,9 +442,24 @@
             });
             
             playSound('roundStart');
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             isRoundTransition = false;
-            showWaitingMessage();
+            
+            // 투표 활성화 및 현재 경기 확인
+            const votingActiveSnapshot = await get(ref(db, 'tournament/votingActive'));
+            const currentMatchSnapshot = await get(ref(db, 'tournament/currentMatchData'));
+            
+            const votingActive = votingActiveSnapshot.val();
+            const matchData = currentMatchSnapshot.val();
+            
+            // 투표가 활성화되어 있고 경기 데이터가 있으면 투표 화면 표시
+            if (votingActive && matchData) {
+                currentMatchData = matchData;
+                hasVoted = false;
+                displayVoteOptions();
+            } else {
+                showWaitingMessage();
+            }
         }
 
         // 현재 경기 데이터 감지
